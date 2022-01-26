@@ -2,12 +2,14 @@ package com.example;
 
 // import java.sql.Timestamp;
 // import java.text.SimpleDateFormat;
-// import java.util.ArrayList;
-// import java.util.HashMap;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+// import java.util.*;
+import java.util.Calendar;
+
 /*
     INSTRUCTIONS:
-    - When adding event, enter date and time as "yyyy-MM-dd hh:mm:ss"
+    - When adding event, enter date and time as "yyyy MM dd hh mm"
 
     >> How to use timestamp
     Timestamp ts = new Timestamp(System.currentTimeMillis());
@@ -20,9 +22,13 @@ import java.util.*;
 */
 
 public class CalendarApp {
-    private HashMap<User, ArrayList<Calendar>> userDict;
+
+    private String TODAY = "2022 01 25 11 13";
+    private String TOMORROW = "2022 01 26 12 01";
+
+    private HashMap<User, ArrayList<CalendarClass>> userDict;
     private User currentUser;
-    private Calendar currentCalendar;
+    private CalendarClass currentCalendar;
     private String cmd;
     private static final String CMD_PROMPT = String.join("\n",
             "\n----------------------------------",
@@ -34,17 +40,18 @@ public class CalendarApp {
             "View Current Calendar = 5",
             "Remove Calendar = 6",
             "Remove Event = 7",
-            "----------------------------------\n",
-            ">>>> ");
+            "QUIT = q",
+            "");
 
     public CalendarApp() {
-        userDict = new HashMap<User, ArrayList<Calendar>>();
+        userDict = new HashMap<User, ArrayList<CalendarClass>>();
         currentUser = null;
         currentCalendar = null;
     }
 
     public void run() {
         Boolean loop = true;
+        p(CMD_PROMPT);
         while (loop) {
             String input = getInput();
             if (input.length() != 0) {
@@ -79,12 +86,12 @@ public class CalendarApp {
                         break;
 
                     case "q":
-                        System.out.println("\nQUITTING\n");
+                        pl("\nQUITTING\n");
                         loop = false;
                         break;
 
                     default:
-                        System.out.println("\nNVALID INPUT\n");
+                        pl("\nNVALID INPUT\n");
                         break;
                 }
             }
@@ -92,9 +99,10 @@ public class CalendarApp {
     }
 
     private static String getInput() {
-        System.out.print(CMD_PROMPT);
+        pl("----------------------------------");
+        p(">>>> ");
         String input = System.console().readLine();
-        System.out.println();
+        pl("");
         return input;
     }
 
@@ -103,21 +111,16 @@ public class CalendarApp {
             return;
         }
         String userName = input.substring(2);
-        Boolean userFound = false;
         for (User u : userDict.keySet()) {
-            System.out.println("userName; " + userName);
-            System.out.println("name; " + u.getName());
             if (u.getName().equals(userName)) {
                 currentUser = u;
-                userFound = true;
+                return;
             }
         }
-        if (!userFound) {
-            User user = new User(userName);
-            ArrayList<Calendar> calendar = new ArrayList<Calendar>();
-            userDict.put(user, calendar);
-            currentUser = user;
-        }
+        User user = new User(userName);
+        ArrayList<CalendarClass> calendar = new ArrayList<CalendarClass>();
+        userDict.put(user, calendar);
+        currentUser = user;
     }
 
     private void addCalendar(String input) {
@@ -129,7 +132,13 @@ public class CalendarApp {
             return;
         }
         String calendarName = input.substring(2);
-        Calendar calendar = new Calendar(calendarName);
+        for (CalendarClass c : userDict.get(currentUser)) {
+            if (c.getName().equals(calendarName)) {
+                currentCalendar = c;
+                return;
+            }
+        }
+        CalendarClass calendar = new CalendarClass(calendarName);
         currentCalendar = calendar;
         userDict.get(currentUser).add(calendar);
     }
@@ -143,11 +152,31 @@ public class CalendarApp {
             return;
         }
         String eventName = input.substring(2);
-        System.out.print("ENTER START DATE\n>>>>");
-        String startDate = System.console().readLine();
-        System.out.print("ENTER END DATE\n>>>>");
-        String endDate = System.console().readLine();
-        Event event = new Event(eventName, startDate, endDate);
+        pl("ENTER START DATE 'yyyy MM dd hh mm'\n>>>>");
+        // String startDate = System.console().readLine();
+        String startDate = TODAY;
+        pl("ENTER END DATE 'yyyy MM dd hh mm'\n>>>>");
+        // String endDate = System.console().readLine();
+        String endDate = TOMORROW;
+        String[] startDateArray = startDate.split(" ");
+        String[] endDateArray = endDate.split(" ");
+
+        Event event = new Event(eventName);
+
+        event.setStartDate(
+                startDateArray[0],
+                startDateArray[1],
+                startDateArray[2],
+                startDateArray[3],
+                startDateArray[4]);
+
+        event.setEndDate(
+                endDateArray[0],
+                endDateArray[1],
+                endDateArray[2],
+                endDateArray[3],
+                endDateArray[4]);
+
         currentCalendar.addEvent(event);
     }
 
@@ -164,7 +193,7 @@ public class CalendarApp {
             return;
         }
         String eventName = input.substring(2);
-        for (Calendar c : userDict.get(currentUser)) {
+        for (CalendarClass c : userDict.get(currentUser)) {
             for (Event e : c.getEvents()) {
                 if (e.getName().equals(eventName)) {
                     c.removeEvent(eventName);
@@ -175,27 +204,48 @@ public class CalendarApp {
 
     private void viewAllCalendars() {
         for (User s : userDict.keySet()) {
-            System.out.println("\nUSER: " + s.getName());
-            for (Calendar c : userDict.get(s)) {
-                System.out.println("CALENDAR: " + c.getName());
+            pl("--------------------");
+            pl("USER: " + s.getName());
+            for (CalendarClass c : userDict.get(s)) {
+                pl("\nCALENDAR: " + c.getName());
                 for (Event e : c.getEvents()) {
-                    System.out.println("EVENT: " + e.getName());
+                    viewEvent(e);
                 }
             }
         }
     }
 
     private void viewCurrentCalendar() {
-        for (Calendar c : userDict.get(currentUser)) {
+        for (CalendarClass c : userDict.get(currentUser)) {
             if (c == currentCalendar) {
-                System.out.println("CALENDAR: " + currentCalendar.getName());
+                pl("CALENDAR: " + currentCalendar.getName());
                 for (Event e : c.getEvents()) {
-                    System.out.println("EVENT: " + e.getName());
-                    System.out.println("START DATE: " + e.getStartDate());
-                    System.out.println("EVENT DATE: " + e.getEndDate());
-
+                    viewEvent(e);
                 }
             }
         }
+    }
+
+    private void viewEvent(Event e) {
+        pl("\nEVENT       : " + e.getName());
+        pl("Start YEAR  : " + e.getStartDate().get(Calendar.YEAR));
+        pl("Start MONTH : " + e.getStartDate().get(Calendar.MONTH));
+        pl("Start DATE  : " + e.getStartDate().get(Calendar.DATE));
+        pl("Start HOUR  : " + e.getStartDate().get(Calendar.HOUR));
+        pl("Start MINUTE: " + e.getStartDate().get(Calendar.MINUTE));
+
+        pl("END YEAR    : " + e.getEndDate().get(Calendar.YEAR));
+        pl("END MONTH   : " + e.getEndDate().get(Calendar.MONTH));
+        pl("END DATE    : " + e.getEndDate().get(Calendar.DATE));
+        pl("END HOUR    : " + e.getEndDate().get(Calendar.HOUR));
+        pl("END MINUTE  : " + e.getEndDate().get(Calendar.MINUTE));
+    }
+
+    private static void p(String s) {
+        System.out.print(s);
+    }
+
+    private static void pl(String s) {
+        System.out.println(s);
     }
 }

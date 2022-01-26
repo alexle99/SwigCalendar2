@@ -2,13 +2,13 @@ package com.example;
 
 import java.util.ArrayList;
 
-public class Calendar {
+public class CalendarClass {
 
     private String name;
     private ArrayList<Event> events;
     Boolean publicView;
 
-    public Calendar(String n) {
+    public CalendarClass(String n) {
         name = n;
         events = new ArrayList<Event>();
         publicView = true;

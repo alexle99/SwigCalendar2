@@ -1,23 +1,27 @@
 package com.example;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /*
-    Time stored as "yyyy-mm-dd hh:mm:ss"
+    Time should be stored as "yyyy-mm-dd hh:mm:ss"
     using java Calendar built in class
 */
 
 class Event {
     private String name;
-    private String startDate;
-    private String endDate;
+    // private String startDate;
+    // private String endDate;
+    private Calendar startDate;
+    private Calendar endDate;
     private ArrayList<String> guests;
     private Boolean repeat;
 
-    public Event(String n, String startT, String endT) {
+    // public Event(String n, String startT, String endT) {
+    public Event(String n) {
         name = n;
-        startDate = startT;
-        endDate = endT;
+        startDate = Calendar.getInstance();
+        endDate = Calendar.getInstance();
         guests = new ArrayList<String>();
         repeat = false;
     }
@@ -30,19 +34,19 @@ class Event {
         return name;
     }
 
-    public void setStartDate(String d) {
-        startDate = d;
+    public void setStartDate(String year, String month, String day, String hour, String minute) {
+        startDate.set(integer(year), integer(month), integer(day), integer(hour), integer(minute));
     }
 
-    public String getStartDate() {
+    public void setEndDate(String year, String month, String day, String hour, String minute) {
+        endDate.set(integer(year), integer(month), integer(day), integer(hour), integer(minute));
+    }
+
+    public Calendar getStartDate() {
         return startDate;
     }
 
-    public void setEndDate(String d) {
-        endDate = d;
-    }
-
-    public String getEndDate() {
+    public Calendar getEndDate() {
         return endDate;
     }
 
@@ -60,6 +64,10 @@ class Event {
 
     public Boolean getRepeatWeekly() {
         return repeat;
+    }
+
+    private int integer(String s) {
+        return Integer.parseInt(s);
     }
 
 }
