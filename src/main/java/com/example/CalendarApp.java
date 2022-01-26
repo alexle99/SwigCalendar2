@@ -152,10 +152,10 @@ public class CalendarApp {
             return;
         }
         String eventName = input.substring(2);
-        pl("ENTER START DATE 'yyyy MM dd hh mm'\n>>>>");
+        p("ENTER START DATE 'yyyy MM dd hh mm'\n>>>> ");
         // String startDate = System.console().readLine();
         String startDate = TODAY;
-        pl("ENTER END DATE 'yyyy MM dd hh mm'\n>>>>");
+        p("ENTER END DATE 'yyyy MM dd hh mm'\n>>>> ");
         // String endDate = System.console().readLine();
         String endDate = TOMORROW;
         String[] startDateArray = startDate.split(" ");

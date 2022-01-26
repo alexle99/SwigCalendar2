@@ -3,21 +3,13 @@ package com.example;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-/*
-    Time should be stored as "yyyy-mm-dd hh:mm:ss"
-    using java Calendar built in class
-*/
-
 class Event {
     private String name;
-    // private String startDate;
-    // private String endDate;
     private Calendar startDate;
     private Calendar endDate;
     private ArrayList<String> guests;
     private Boolean repeat;
 
-    // public Event(String n, String startT, String endT) {
     public Event(String n) {
         name = n;
         startDate = Calendar.getInstance();
