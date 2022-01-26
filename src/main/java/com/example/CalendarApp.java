@@ -54,47 +54,7 @@ public class CalendarApp {
         p(CMD_PROMPT);
         while (loop) {
             String input = getInput();
-            if (input.length() != 0) {
-                cmd = input.substring(0, 1);
-                switch (cmd) {
-                    case "1":
-                        logIn(input);
-                        break;
-
-                    case "2":
-                        addCalendar(input);
-                        break;
-
-                    case "3":
-                        addEvent(input);
-                        break;
-
-                    case "4":
-                        viewAllCalendars();
-                        break;
-
-                    case "5":
-                        viewCurrentCalendar();
-                        break;
-
-                    case "6":
-                        removeCalendar(input);
-                        break;
-
-                    case "7":
-                        removeEvent(input);
-                        break;
-
-                    case "q":
-                        pl("\nQUITTING\n");
-                        loop = false;
-                        break;
-
-                    default:
-                        pl("\nNVALID INPUT\n");
-                        break;
-                }
-            }
+            loop = handleInput(input);
         }
     }
 
@@ -106,11 +66,62 @@ public class CalendarApp {
         return input;
     }
 
-    private void logIn(String input) {
-        if (input.length() < 2) {
-            return;
+    private Boolean handleInput(String input) {
+        if (input.length() != 0) {
+            cmd = input.substring(0, 1);
+            switch (cmd) {
+                case "1":
+                    if (argExists(input)) {
+                        logIn(input.substring(2));
+                    }
+                    break;
+
+                case "2":
+                    if (argExists(input)) {
+                        addCalendar(input.substring(2));
+                    }
+                    break;
+
+                case "3":
+                    if (argExists(input)) {
+                        addEvent(input.substring(2));
+                    }
+                    break;
+
+                case "4":
+                    viewAllCalendars();
+                    break;
+
+                case "5":
+                    viewCurrentCalendar();
+                    break;
+
+                case "6":
+                    if (argExists(input)) {
+                        removeCalendar(input.substring(2));
+                    }
+                    break;
+
+                case "7":
+                    if (argExists(input)) {
+                        removeEvent(input.substring(2));
+                    }
+                    break;
+
+                case "q":
+                    pl("\nQUITTING\n");
+                    return false;
+
+                default:
+                    pl("\nINVALID INPUT\n");
+                    break;
+            }
         }
-        String userName = input.substring(2);
+        return true;
+    }
+
+    private void logIn(String userName) {
+        // String userName = input.substring(2);
         for (User u : userDict.keySet()) {
             if (u.getName().equals(userName)) {
                 currentUser = u;
@@ -206,6 +217,10 @@ public class CalendarApp {
         currentCalendar.removeEvent(eventName);
     }
 
+    private void updateEvent(String input) {
+
+    }
+
     private void viewAllCalendars() {
         for (User s : userDict.keySet()) {
             pl("--------------------");
@@ -243,6 +258,14 @@ public class CalendarApp {
         pl("END DATE    : " + e.getEndDate().get(Calendar.DATE));
         pl("END HOUR    : " + e.getEndDate().get(Calendar.HOUR));
         pl("END MINUTE  : " + e.getEndDate().get(Calendar.MINUTE));
+    }
+
+    private boolean argExists(String input) {
+        if (input.length() < 2) {
+            pl("empty arg");
+            return false;
+        }
+        return true;
     }
 
     private static void p(String s) {
