@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /*
     Time stored as "yyyy-mm-dd hh:mm:ss"
+    using java Calendar built in class
 */
 
 class Event {
