@@ -1,1 +1,5 @@
-com\example\App.class
+com\example\Calendar.class
+com\example\Event.class
+com\example\Main.class
+com\example\CalendarApp.class
+com\example\User.class
