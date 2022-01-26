@@ -157,6 +157,7 @@ public class CalendarApp {
         String startDate = TODAY;
         p("ENTER END DATE 'yyyy MM dd hh mm'\n>>>> ");
         // String endDate = System.console().readLine();
+        pl("");
         String endDate = TOMORROW;
         String[] startDateArray = startDate.split(" ");
         String[] endDateArray = endDate.split(" ");
@@ -181,7 +182,16 @@ public class CalendarApp {
     }
 
     private void removeCalendar(String input) {
-
+        if (input.length() < 2) {
+            return;
+        }
+        String calendarName = input.substring(2);
+        for (CalendarClass c : userDict.get(currentUser)) {
+            if (c.getName().equals(calendarName)) {
+                userDict.get(currentUser).remove(c);
+                return;
+            }
+        }
     }
 
     private void removeEvent(String input) {
@@ -193,13 +203,7 @@ public class CalendarApp {
             return;
         }
         String eventName = input.substring(2);
-        for (CalendarClass c : userDict.get(currentUser)) {
-            for (Event e : c.getEvents()) {
-                if (e.getName().equals(eventName)) {
-                    c.removeEvent(eventName);
-                }
-            }
-        }
+        currentCalendar.removeEvent(eventName);
     }
 
     private void viewAllCalendars() {

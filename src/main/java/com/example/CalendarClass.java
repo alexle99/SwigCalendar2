@@ -28,7 +28,7 @@ public class CalendarClass {
 
     public void removeEvent(String event) {
         for (Event e : events) {
-            if (e.getName() == event) {
+            if (e.getName().equals(event)) {
                 events.remove(e);
             }
         }
