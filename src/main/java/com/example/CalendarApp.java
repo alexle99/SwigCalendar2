@@ -48,6 +48,8 @@ public class CalendarApp {
             "Rename Calendar = 8 *calendar name*",
             "Rename Event = 9 *old event name* *new event name*",
             "Update Event = A *event name*",
+            "Filter Calendars = B *key word*",
+            "Filter Events = C *key word*",
             "QUIT = q",
             "");
 
@@ -131,6 +133,18 @@ public class CalendarApp {
                 case "A":
                     if (argExists(input)) {
                         updateEvent(input.substring(2));
+                    }
+                    break;
+
+                case "B":
+                    if (argExists(input)) {
+                        filterCalendars(input.substring(2));
+                    }
+                    break;
+
+                case "C":
+                    if (argExists(input)) {
+                        filterEvents(input.substring(2));
                     }
                     break;
 
@@ -244,11 +258,33 @@ public class CalendarApp {
         }
     }
 
+    // brute force, remove event with name and make new event with same name
+    // user has to input all the fields again
     private void updateEvent(String input) {
         currentCalendar.removeEvent(input);
         addEvent(input);
     }
 
+    // filters calendars of the current user that have substring in name
+    private void filterCalendars(String substring) {
+        for (CalendarClass c : userDict.get(currentUser)) {
+            if (c.getName().contains(substring)) {
+                viewCalendar(c);
+            }
+        }
+    }
+
+    // filters events that contain substring in the current calendar
+    private void filterEvents(String substring) {
+        for (Event e : currentCalendar.getEvents()) {
+            if (e.getName().contains(substring)) {
+                viewEvent(e);
+            }
+        }
+    }
+
+    // show all the users, their calendars and each calendar's events
+    // doesn't take into account private calendars yet
     private void viewAllCalendars() {
         for (User s : userDict.keySet()) {
             pl("--------------------");
@@ -270,6 +306,13 @@ public class CalendarApp {
                     viewEvent(e);
                 }
             }
+        }
+    }
+
+    private void viewCalendar(CalendarClass c) {
+        pl("\nCALENDAR: " + c.getName());
+        for (Event e : c.getEvents()) {
+            viewEvent(e);
         }
     }
 
