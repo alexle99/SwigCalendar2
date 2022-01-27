@@ -9,6 +9,7 @@ import java.util.Calendar;
 
 /*
     INSTRUCTIONS:
+    - When adding calendars or events, do not includes spaces
     - When adding event, enter date and time as "yyyy MM dd hh mm"
 
     >> How to use timestamp
@@ -25,6 +26,10 @@ public class CalendarApp {
 
     private String TODAY = "2022 01 25 11 13";
     private String TOMORROW = "2022 01 26 12 01";
+    private String ONES = "1111 11 11 11 11";
+    private String ZEROS = "0000 00 00 00 00";
+    private String TWOS = "2222 22 22 22 22";
+    private String THREES = "3333 33 33 33 33";
 
     private HashMap<User, ArrayList<CalendarClass>> userDict;
     private User currentUser;
@@ -38,8 +43,11 @@ public class CalendarApp {
             "Add Event = 3 *event name*",
             "View All Calendars = 4",
             "View Current Calendar = 5",
-            "Remove Calendar = 6",
-            "Remove Event = 7",
+            "Remove Calendar = 6 *calendar name*",
+            "Remove Event = 7 *event name*",
+            "Rename Calendar = 8 *calendar name*",
+            "Rename Event = 9 *old event name* *new event name*",
+            "Update Event = A *event name*",
             "QUIT = q",
             "");
 
@@ -108,7 +116,25 @@ public class CalendarApp {
                     }
                     break;
 
-                case "q":
+                case "8":
+                    if (argExists(input)) {
+                        renameCalendar(input.substring(2));
+                    }
+                    break;
+
+                case "9":
+                    if (argExists(input)) {
+                        renameEvent(input.substring(2));
+                    }
+                    break;
+
+                case "A":
+                    if (argExists(input)) {
+                        updateEvent(input.substring(2));
+                    }
+                    break;
+
+                case "Q":
                     pl("\nQUITTING\n");
                     return false;
 
@@ -121,7 +147,6 @@ public class CalendarApp {
     }
 
     private void logIn(String userName) {
-        // String userName = input.substring(2);
         for (User u : userDict.keySet()) {
             if (u.getName().equals(userName)) {
                 currentUser = u;
@@ -134,15 +159,11 @@ public class CalendarApp {
         currentUser = user;
     }
 
-    private void addCalendar(String input) {
-        if (input.length() < 2) {
-            return;
-        }
+    private void addCalendar(String calendarName) {
         if (currentUser == null) {
             System.out.println("Log in first");
             return;
         }
-        String calendarName = input.substring(2);
         for (CalendarClass c : userDict.get(currentUser)) {
             if (c.getName().equals(calendarName)) {
                 currentCalendar = c;
@@ -154,26 +175,24 @@ public class CalendarApp {
         userDict.get(currentUser).add(calendar);
     }
 
-    private void addEvent(String input) {
+    private void addEvent(String eventName) {
         if (currentCalendar == null) {
             System.out.println("Add calendar first");
             return;
         }
-        if (input.length() < 2) {
-            return;
-        }
-        String eventName = input.substring(2);
-        p("ENTER START DATE 'yyyy MM dd hh mm'\n>>>> ");
-        // String startDate = System.console().readLine();
-        String startDate = TODAY;
-        p("ENTER END DATE 'yyyy MM dd hh mm'\n>>>> ");
-        // String endDate = System.console().readLine();
-        pl("");
-        String endDate = TOMORROW;
-        String[] startDateArray = startDate.split(" ");
-        String[] endDateArray = endDate.split(" ");
 
         Event event = new Event(eventName);
+
+        p("ENTER START DATE 'yyyy MM dd hh mm'\n>>>> ");
+        String startDate = System.console().readLine();
+        // String startDate = TODAY;
+
+        p("ENTER END DATE 'yyyy MM dd hh mm'\n>>>> ");
+        // String endDate = System.console().readLine();
+        String endDate = TOMORROW;
+        pl("");
+        String[] startDateArray = startDate.split(" ");
+        String[] endDateArray = endDate.split(" ");
 
         event.setStartDate(
                 startDateArray[0],
@@ -192,11 +211,7 @@ public class CalendarApp {
         currentCalendar.addEvent(event);
     }
 
-    private void removeCalendar(String input) {
-        if (input.length() < 2) {
-            return;
-        }
-        String calendarName = input.substring(2);
+    private void removeCalendar(String calendarName) {
         for (CalendarClass c : userDict.get(currentUser)) {
             if (c.getName().equals(calendarName)) {
                 userDict.get(currentUser).remove(c);
@@ -205,20 +220,33 @@ public class CalendarApp {
         }
     }
 
-    private void removeEvent(String input) {
+    private void removeEvent(String eventName) {
         if (currentCalendar == null) {
             System.out.println("Add calendar first");
             return;
         }
-        if (input.length() < 2) {
-            return;
-        }
-        String eventName = input.substring(2);
         currentCalendar.removeEvent(eventName);
     }
 
-    private void updateEvent(String input) {
+    private void renameCalendar(String input) {
+        currentCalendar.setName(input);
+    }
 
+    private void renameEvent(String input) {
+        pl("INPUT: " + input);
+        String[] inputArray = input.split(" ");
+        String oldName = inputArray[0];
+        String newName = inputArray[1];
+        for (Event e : currentCalendar.getEvents()) {
+            if (oldName.equals(e.getName())) {
+                e.setName(newName);
+            }
+        }
+    }
+
+    private void updateEvent(String input) {
+        currentCalendar.removeEvent(input);
+        addEvent(input);
     }
 
     private void viewAllCalendars() {
@@ -247,24 +275,33 @@ public class CalendarApp {
 
     private void viewEvent(Event e) {
         pl("\nEVENT       : " + e.getName());
-        pl("Start YEAR  : " + e.getStartDate().get(Calendar.YEAR));
-        pl("Start MONTH : " + e.getStartDate().get(Calendar.MONTH));
-        pl("Start DATE  : " + e.getStartDate().get(Calendar.DATE));
-        pl("Start HOUR  : " + e.getStartDate().get(Calendar.HOUR));
-        pl("Start MINUTE: " + e.getStartDate().get(Calendar.MINUTE));
+        pl("-Start YEAR  : " + e.getStartDate().get(Calendar.YEAR));
+        pl("-Start MONTH : " + e.getStartDate().get(Calendar.MONTH));
+        pl("-Start DATE  : " + e.getStartDate().get(Calendar.DATE));
+        pl("-Start HOUR  : " + e.getStartDate().get(Calendar.HOUR));
+        pl("-Start MINUTE: " + e.getStartDate().get(Calendar.MINUTE));
 
-        pl("END YEAR    : " + e.getEndDate().get(Calendar.YEAR));
-        pl("END MONTH   : " + e.getEndDate().get(Calendar.MONTH));
-        pl("END DATE    : " + e.getEndDate().get(Calendar.DATE));
-        pl("END HOUR    : " + e.getEndDate().get(Calendar.HOUR));
-        pl("END MINUTE  : " + e.getEndDate().get(Calendar.MINUTE));
+        pl("-END YEAR    : " + e.getEndDate().get(Calendar.YEAR));
+        pl("-END MONTH   : " + e.getEndDate().get(Calendar.MONTH));
+        pl("-END DATE    : " + e.getEndDate().get(Calendar.DATE));
+        pl("-END HOUR    : " + e.getEndDate().get(Calendar.HOUR));
+        pl("-END MINUTE  : " + e.getEndDate().get(Calendar.MINUTE));
     }
 
-    private boolean argExists(String input) {
+    private static boolean argExists(String input) {
+
+        String[] inputArray = input.split(" ");
+
         if (input.length() < 2) {
             pl("empty arg");
             return false;
         }
+
+        String result = "";
+        for (String s : inputArray) {
+            result += s + " ";
+        }
+
         return true;
     }
 

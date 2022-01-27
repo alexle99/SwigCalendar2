@@ -42,6 +42,10 @@ class Event {
         return endDate;
     }
 
+    public void updateStartDate(int field, int value) {
+        startDate.set(field, value);
+    }
+
     public void addGuest(String guest) {
         guests.add(guest);
     }

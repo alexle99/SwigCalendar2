@@ -30,6 +30,7 @@ public class CalendarClass {
         for (Event e : events) {
             if (e.getName().equals(event)) {
                 events.remove(e);
+                break;
             }
         }
     }
