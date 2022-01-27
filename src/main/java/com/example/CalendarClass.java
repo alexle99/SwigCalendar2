@@ -39,11 +39,11 @@ public class CalendarClass {
         return events;
     }
 
-    public void makePublic(Boolean b) {
-        publicView = b;
+    public void togglePublic() {
+        publicView = !publicView;
     }
 
-    public Boolean getRepeatWeekly() {
+    public Boolean isPublic() {
         return publicView;
     }
 }

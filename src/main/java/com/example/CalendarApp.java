@@ -36,7 +36,7 @@ public class CalendarApp {
     private CalendarClass currentCalendar;
     private String cmd;
     private static final String CMD_PROMPT = String.join("\n",
-            "\n----------------------------------",
+            "\n==================================================",
             "COMMANDS:",
             "Log In = 1 *name*",
             "Add Calendar = 2 *calendar name*",
@@ -50,6 +50,10 @@ public class CalendarApp {
             "Update Event = A *event name*",
             "Filter Calendars = B *key word*",
             "Filter Events = C *key word*",
+            "Toggle Calendar Privacy = D",
+            "Curent User = E",
+            "All Users = F",
+            "Current Calendar = G",
             "QUIT = q",
             "");
 
@@ -69,7 +73,7 @@ public class CalendarApp {
     }
 
     private static String getInput() {
-        pl("----------------------------------");
+        pl("==================================================");
         p(">>>> ");
         String input = System.console().readLine();
         pl("");
@@ -146,6 +150,22 @@ public class CalendarApp {
                     if (argExists(input)) {
                         filterEvents(input.substring(2));
                     }
+                    break;
+
+                case "D":
+                    toggleCurrentCalendarPrivacy();
+                    break;
+
+                case "E":
+                    pl("Current User: " + currentUser.getName());
+                    break;
+
+                case "F":
+                    viewAllUsers();
+                    break;
+
+                case "G":
+                    pl("Current Calendar: " + currentCalendar.getName());
                     break;
 
                 case "Q":
@@ -283,6 +303,18 @@ public class CalendarApp {
         }
     }
 
+    // calendar privacy toggling
+    // only the owner of the calendar can see it when it is private
+    private void toggleCurrentCalendarPrivacy() {
+        currentCalendar.togglePublic();
+        p(currentCalendar.getName() + " IS NOW ");
+        if (currentCalendar.isPublic()) {
+            pl("PUBLIC");
+        } else {
+            pl("PRIVATE");
+        }
+    }
+
     // show all the users, their calendars and each calendar's events
     // doesn't take into account private calendars yet
     private void viewAllCalendars() {
@@ -290,23 +322,20 @@ public class CalendarApp {
             pl("--------------------");
             pl("USER: " + s.getName());
             for (CalendarClass c : userDict.get(s)) {
-                pl("\nCALENDAR: " + c.getName());
-                for (Event e : c.getEvents()) {
-                    viewEvent(e);
+                if (c.isPublic()) {
+                    viewCalendar(c);
+                } else {
+                    // if the calendar belongs to the user
+                    if (userDict.get(currentUser).contains(c)) {
+                        viewCalendar(c);
+                    }
                 }
             }
         }
     }
 
     private void viewCurrentCalendar() {
-        for (CalendarClass c : userDict.get(currentUser)) {
-            if (c == currentCalendar) {
-                pl("CALENDAR: " + currentCalendar.getName());
-                for (Event e : c.getEvents()) {
-                    viewEvent(e);
-                }
-            }
-        }
+        viewCalendar(currentCalendar);
     }
 
     private void viewCalendar(CalendarClass c) {
@@ -329,6 +358,13 @@ public class CalendarApp {
         pl("-END DATE    : " + e.getEndDate().get(Calendar.DATE));
         pl("-END HOUR    : " + e.getEndDate().get(Calendar.HOUR));
         pl("-END MINUTE  : " + e.getEndDate().get(Calendar.MINUTE));
+    }
+
+    private void viewAllUsers() {
+        pl("Users: ");
+        for (User u : userDict.keySet()) {
+            pl(u.getName());
+        }
     }
 
     private static boolean argExists(String input) {
