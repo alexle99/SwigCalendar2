@@ -15,7 +15,6 @@ class Event {
         startDate = Calendar.getInstance();
         endDate = Calendar.getInstance();
         guests = new ArrayList<String>();
-        repeat = false;
     }
 
     public void setName(String n) {

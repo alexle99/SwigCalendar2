@@ -37,6 +37,7 @@ public class CalendarApp {
     private String cmd;
     private static final String CMD_PROMPT = String.join("\n",
             "\n==================================================",
+            "---Enter dates in format 'yyyy MM dd hh mm'",
             "COMMANDS:",
             "Log In = 1 *name*",
             "Add Calendar = 2 *calendar name*",
@@ -54,7 +55,8 @@ public class CalendarApp {
             "Curent User = E",
             "All Users = F",
             "Current Calendar = G",
-            "QUIT = q",
+            "Share Current Calendar = H *user*",
+            "QUIT = Q",
             "");
 
     public CalendarApp() {
@@ -168,6 +170,10 @@ public class CalendarApp {
                     pl("Current Calendar: " + currentCalendar.getName());
                     break;
 
+                case "H":
+                    shareCalendar(input.substring(2));
+                    break;
+
                 case "Q":
                     pl("\nQUITTING\n");
                     return false;
@@ -218,8 +224,8 @@ public class CalendarApp {
         Event event = new Event(eventName);
 
         p("ENTER START DATE 'yyyy MM dd hh mm'\n>>>> ");
-        String startDate = System.console().readLine();
-        // String startDate = TODAY;
+        // String startDate = System.console().readLine();
+        String startDate = TODAY;
 
         p("ENTER END DATE 'yyyy MM dd hh mm'\n>>>> ");
         // String endDate = System.console().readLine();
@@ -313,6 +319,20 @@ public class CalendarApp {
         } else {
             pl("PRIVATE");
         }
+    }
+
+    private User getUser(String name) {
+        for (User u : userDict.keySet()) {
+            if (u.getName().equals(name)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    private void shareCalendar(String user) {
+        User u = getUser(user);
+        userDict.get(u).add(currentCalendar);
     }
 
     // show all the users, their calendars and each calendar's events
