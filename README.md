@@ -1,8 +1,6 @@
 # SwigCalendar2
 
-## Build with Maven
-
-build project with **"mvn clean package"**
+## Java version 16.0.1
 
 ## RUN
 
