@@ -1,20 +1,19 @@
 package com.example;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+
+// Event class utilizes the built in Calendar class so it is easier to 
+// implement the repeating feature. 
 
 class Event {
     private String name;
     private Calendar startDate;
     private Calendar endDate;
-    private ArrayList<String> guests;
-    private Boolean repeat;
 
     public Event(String n) {
         name = n;
         startDate = Calendar.getInstance();
         endDate = Calendar.getInstance();
-        guests = new ArrayList<String>();
     }
 
     public void setName(String n) {
@@ -43,22 +42,6 @@ class Event {
 
     public void updateStartDate(int field, int value) {
         startDate.set(field, value);
-    }
-
-    public void addGuest(String guest) {
-        guests.add(guest);
-    }
-
-    public ArrayList<String> getGuests() {
-        return guests;
-    }
-
-    public void repeatWeekly(Boolean b) {
-        repeat = b;
-    }
-
-    public Boolean getRepeatWeekly() {
-        return repeat;
     }
 
     private int integer(String s) {

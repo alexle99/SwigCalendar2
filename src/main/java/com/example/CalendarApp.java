@@ -1,21 +1,13 @@
 package com.example;
 
-// import java.sql.Timestamp;
-// import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-// import java.util.*;
 import java.util.Calendar;
 
 /*
     INSTRUCTIONS:
-    - When adding calendars or events, do not includes spaces
+    - When adding calendars or events, do not includes spaces in names
     - When adding event, enter date and time as "yyyy MM dd hh mm"
-
-    >> How to use timestamp
-    Timestamp ts = new Timestamp(System.currentTimeMillis());
-    String s = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(ts);
-    Event e = new Event("eventName", s, s);
 
     >> Hashmap over Hashtable
     - I don't plan on using threads so I don't need synchronization yet, hashmap is more efficient for this
@@ -24,15 +16,19 @@ import java.util.Calendar;
 
 public class CalendarApp {
 
-    private String TODAY = "2022 01 25 11 13";
-    private String TOMORROW = "2022 01 26 12 01";
-    private String ONES = "1111 11 11 11 11";
-    private String ZEROS = "0000 00 00 00 00";
-    private String TWOS = "2222 22 22 22 22";
-    private String THREES = "3333 33 33 33 33";
+    // private String TODAY = "2022 01 25 11 13";
+    // private String TOMORROW = "2022 01 26 12 01";
+    // private String ONES = "1111 11 11 11 11";
+    // private String ZEROS = "0000 00 00 00 00";
+    // private String TWOS = "2222 22 22 22 22";
+    // private String THREES = "3333 33 33 33 33";
 
+    private static CalendarApp calendarApp;
+    // the main data structure
     private HashMap<User, ArrayList<CalendarClass>> userDict;
+    // keeps track of current user using the app
     private User currentUser;
+    // keeps track of current Calendar to display
     private CalendarClass currentCalendar;
     private String cmd;
     private static final String CMD_PROMPT = String.join("\n",
@@ -53,18 +49,27 @@ public class CalendarApp {
             "Filter Events = C *key word*",
             "Toggle Calendar Privacy = D",
             "Curent User = E",
-            "All Users = F",
-            "Current Calendar = G",
-            "Share Current Calendar = H *user*",
+            "Current Calendar = F",
+            "Share Current Calendar = G *user*",
             "QUIT = Q",
             "");
 
-    public CalendarApp() {
+    // CalendarApp is a singleton
+    private CalendarApp() {
         userDict = new HashMap<User, ArrayList<CalendarClass>>();
         currentUser = null;
         currentCalendar = null;
     }
 
+    // called from Main.java
+    public static CalendarApp getInstance() {
+        if (calendarApp == null) {
+            calendarApp = new CalendarApp();
+        }
+        return calendarApp;
+    }
+
+    // main loop for user input and handling input
     public void run() {
         Boolean loop = true;
         p(CMD_PROMPT);
@@ -163,14 +168,10 @@ public class CalendarApp {
                     break;
 
                 case "F":
-                    viewAllUsers();
-                    break;
-
-                case "G":
                     pl("Current Calendar: " + currentCalendar.getName());
                     break;
 
-                case "H":
+                case "G":
                     shareCalendar(input.substring(2));
                     break;
 
@@ -200,11 +201,13 @@ public class CalendarApp {
     }
 
     private void addCalendar(String calendarName) {
+        // a user must be logged into add a calendar
         if (currentUser == null) {
             System.out.println("Log in first");
             return;
         }
         for (CalendarClass c : userDict.get(currentUser)) {
+            // doesn't add calendar with existing name
             if (c.getName().equals(calendarName)) {
                 currentCalendar = c;
                 return;
@@ -216,6 +219,7 @@ public class CalendarApp {
     }
 
     private void addEvent(String eventName) {
+        // current calendar must exist
         if (currentCalendar == null) {
             System.out.println("Add calendar first");
             return;
@@ -224,12 +228,12 @@ public class CalendarApp {
         Event event = new Event(eventName);
 
         p("ENTER START DATE 'yyyy MM dd hh mm'\n>>>> ");
-        // String startDate = System.console().readLine();
-        String startDate = TODAY;
+        String startDate = System.console().readLine();
+        // String startDate = TODAY;
 
         p("ENTER END DATE 'yyyy MM dd hh mm'\n>>>> ");
-        // String endDate = System.console().readLine();
-        String endDate = TOMORROW;
+        String endDate = System.console().readLine();
+        // String endDate = TOMORROW;
         pl("");
         String[] startDateArray = startDate.split(" ");
         String[] endDateArray = endDate.split(" ");
@@ -273,7 +277,6 @@ public class CalendarApp {
     }
 
     private void renameEvent(String input) {
-        pl("INPUT: " + input);
         String[] inputArray = input.split(" ");
         String oldName = inputArray[0];
         String newName = inputArray[1];
@@ -330,13 +333,14 @@ public class CalendarApp {
         return null;
     }
 
+    // add calendar with same public toggle to specified user
     private void shareCalendar(String user) {
         User u = getUser(user);
         userDict.get(u).add(currentCalendar);
     }
 
     // show all the users, their calendars and each calendar's events
-    // doesn't take into account private calendars yet
+    // private calendars aren't shown unless calendar's user is logged in
     private void viewAllCalendars() {
         for (User s : userDict.keySet()) {
             pl("--------------------");
@@ -380,27 +384,19 @@ public class CalendarApp {
         pl("-END MINUTE  : " + e.getEndDate().get(Calendar.MINUTE));
     }
 
-    private void viewAllUsers() {
-        pl("Users: ");
-        for (User u : userDict.keySet()) {
-            pl(u.getName());
-        }
-    }
+    // // used for testing
+    // private void viewAllUsers() {
+    // pl("Users: ");
+    // for (User u : userDict.keySet()) {
+    // pl(u.getName());
+    // }
+    // }
 
     private static boolean argExists(String input) {
-
-        String[] inputArray = input.split(" ");
-
         if (input.length() < 2) {
             pl("empty arg");
             return false;
         }
-
-        String result = "";
-        for (String s : inputArray) {
-            result += s + " ";
-        }
-
         return true;
     }
 

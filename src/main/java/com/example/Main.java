@@ -3,7 +3,7 @@ package com.example;
 public class Main {
 
     public static void main(String[] args) {
-        CalendarApp app = new CalendarApp();
+        CalendarApp app = CalendarApp.getInstance();
         app.run();
 
     }

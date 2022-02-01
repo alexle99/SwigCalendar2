@@ -2,8 +2,11 @@ package com.example;
 
 import java.util.ArrayList;
 
-public class CalendarClass {
+// the events of the CalendarClass will be stored in a mutable list of Events
+// In the future, if I had to implement undoing feature, I would use a 
+// immutable list and store each event as a history
 
+public class CalendarClass {
     private String name;
     private ArrayList<Event> events;
     Boolean publicView;
