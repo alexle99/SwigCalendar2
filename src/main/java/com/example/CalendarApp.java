@@ -31,28 +31,6 @@ public class CalendarApp {
     // keeps track of current Calendar to display
     private CalendarClass currentCalendar;
     private String cmd;
-    private static final String CMD_PROMPT = String.join("\n",
-            "\n==================================================",
-            "---Enter dates in format 'yyyy MM dd hh mm'",
-            "COMMANDS:",
-            "Log In = 1 *name*",
-            "Add Calendar = 2 *calendar name*",
-            "Add Event = 3 *event name*",
-            "View All Calendars = 4",
-            "View Current Calendar = 5",
-            "Remove Calendar = 6 *calendar name*",
-            "Remove Event = 7 *event name*",
-            "Rename Calendar = 8 *calendar name*",
-            "Rename Event = 9 *old event name* *new event name*",
-            "Update Event = A *event name*",
-            "Filter Calendars = B *key word*",
-            "Filter Events = C *key word*",
-            "Toggle Calendar Privacy = D",
-            "Curent User = E",
-            "Current Calendar = F",
-            "Share Current Calendar = G *user*",
-            "QUIT = Q",
-            "");
 
     // CalendarApp is a singleton
     private CalendarApp() {
@@ -72,7 +50,6 @@ public class CalendarApp {
     // main loop for user input and handling input
     public void run() {
         Boolean loop = true;
-        p(CMD_PROMPT);
         while (loop) {
             String input = getInput();
             loop = handleInput(input);
