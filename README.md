@@ -6,11 +6,11 @@ build project with **"mvn clean package"**
 
 ## RUN
 
-cd to **"/demo"**
+cd to **"/target"**
 run with **"java -jar target/demo-1.jar"**
 
 ## SwigCalendar Commands
-
+Enter command after the **>>>>** 
 - **Log In** = 1 'name'
 - **Add Calendar** = 2 'calendar name'
 - **Add Event** = 3 'event name'
